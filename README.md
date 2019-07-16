@@ -1,6 +1,6 @@
 # Gerenciador de tarefas
 
-Gerenciador de tarefas utilizando Spring Boot, Maven, Hibernate, JDBC (Mysql)
+Gerenciador de tarefas utilizando Spring Boot, Spring MVC, Spring Security, Maven, Hibernate, JDBC (Mysql), Heroku
 
 # Link da aplicação (Deploy feito através do Heroku) 
 
