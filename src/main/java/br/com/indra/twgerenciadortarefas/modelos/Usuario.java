@@ -5,11 +5,14 @@
  */
 package br.com.indra.twgerenciadortarefas.modelos;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
@@ -35,6 +38,17 @@ public class Usuario {
     @Column(name = "password", nullable = false, length = 100)
     @NotNull(message = "A senha é obrigatória.")
     private String password;
+    
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<Tarefa> tarefas;
+
+    public List<Tarefa> getTarefas() {
+        return tarefas;
+    }
+
+    public void setTarefas(List<Tarefa> tarefas) {
+        this.tarefas = tarefas;
+    }
 
     public Long getId() {
         return id;

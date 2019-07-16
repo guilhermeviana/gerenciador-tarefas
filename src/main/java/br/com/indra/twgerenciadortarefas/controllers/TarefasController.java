@@ -6,8 +6,11 @@
 package br.com.indra.twgerenciadortarefas.controllers;
 
 import br.com.indra.twgerenciadortarefas.modelos.Tarefa;
+import br.com.indra.twgerenciadortarefas.modelos.Usuario;
 import br.com.indra.twgerenciadortarefas.repositorios.RepositorioTarefa;
+import br.com.indra.twgerenciadortarefas.servicos.ServicoUsuario;
 import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,11 +32,15 @@ public class TarefasController {
     @Autowired
     private RepositorioTarefa repositorioTarefa;
 
+    @Autowired
+    private ServicoUsuario servicoUsuario;
+
     @GetMapping("/listar")
-    public ModelAndView listar() {
+    public ModelAndView listar(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("tarefas/listar");
-        mv.addObject("tarefas", repositorioTarefa.findAll());
+        String emailUsuario = request.getUserPrincipal().getName();
+        mv.addObject("tarefas", repositorioTarefa.carregaTarefasPorUsuario(emailUsuario));
         return mv;
     }
 
@@ -46,7 +53,7 @@ public class TarefasController {
     }
 
     @PostMapping("/inserir")
-    public ModelAndView inserir(@Valid Tarefa tarefa, BindingResult result) {
+    public ModelAndView inserir(@Valid Tarefa tarefa, BindingResult result, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
 
         if (tarefa.getDataExpiracao() == null) {
@@ -61,8 +68,11 @@ public class TarefasController {
             mv.setViewName("tarefas/inserir");
             mv.addObject(tarefa);
         } else {
-            mv.setViewName("redirect:/tarefas/listar");
+            String emailUsuario = request.getUserPrincipal().getName();
+            Usuario usr = servicoUsuario.encontrarPorEmail(emailUsuario);
+            tarefa.setUsuario(usr);
             repositorioTarefa.save(tarefa);
+            mv.setViewName("redirect:/tarefas/listar");
         }
         return mv;
     }
